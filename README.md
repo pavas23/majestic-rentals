@@ -5,4 +5,4 @@ in India.
 
 ### Enhanced ER Model
 
-![DBMS ER Model Draft (1)](https://user-images.githubusercontent.com/97559428/223500208-36ef75cc-fc5a-4432-ad60-72ebb2b0966c.png)
+![EER Model](https://user-images.githubusercontent.com/97559428/223504277-bc0e64a2-a055-4fbc-9b90-99a42c4917b8.png)
