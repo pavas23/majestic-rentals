@@ -5,4 +5,4 @@ in India.
 
 ### Enhanced ER Model
 
-![EER Model](https://user-images.githubusercontent.com/97559428/223504277-bc0e64a2-a055-4fbc-9b90-99a42c4917b8.png)
+![EER Model](https://user-images.githubusercontent.com/97559428/226178609-e3cdb6b3-df53-4e90-b042-64a829384c91.png)
