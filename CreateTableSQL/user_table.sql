@@ -14,3 +14,4 @@ CREATE TABLE users(
     isOwner INTEGER NOT NULL,
     isTenant INTEGER NOT NULL
 );
+
