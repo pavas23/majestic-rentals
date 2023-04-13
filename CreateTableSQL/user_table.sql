@@ -12,4 +12,5 @@ CREATE TABLE users(
     isDBA INTEGER NOT NULL,
     isManager INTEGER NOT NULL,
     isOwner INTEGER NOT NULL,
-    isTenant INTEGER NOT NULL);
+    isTenant INTEGER NOT NULL
+);
