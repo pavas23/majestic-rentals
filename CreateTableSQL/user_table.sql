@@ -11,5 +11,7 @@ CREATE TABLE users(
     PINCODE VARCHAR(200),
     isDBA INTEGER NOT NULL,
     isManager INTEGER NOT NULL,
-    isOwner INTEGER NOT NULL, 
-    isTenant INTEGER NOT NULL);
+    isOwner INTEGER NOT NULL,
+    isTenant INTEGER NOT NULL
+);
+
