@@ -6,3 +6,5 @@ dbms_output.put_line('Property: '||PROPERTYID||' added to table');
 end;
 /
 
+-- procedure to get property records for a given owner id
+create or replace procedure getPropertyRecords(OWNER_ID in INTEGER) as begin
