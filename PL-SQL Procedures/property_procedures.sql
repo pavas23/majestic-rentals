@@ -114,6 +114,46 @@ END IF;
 END;
 /
 
+-- Procedures to search for city, locality
+
+CREATE OR REPLACE FUNCTION is_in_string (string_in IN VARCHAR2 ,substring_in   IN VARCHAR2) RETURN BOOLEAN
+IS
+BEGIN
+  RETURN INSTR (string_in, substring_in) > 0;
+END is_in_string;
+/
+
+CREATE OR REPLACE PROCEDURE findPlace(location IN VARCHAR2) AS
+BEGIN
+FOR ITR IN (SELECT * FROM PROPERTY)
+LOOP
+IF is_in_string(LOWER(ITR.LOCALITY), LOWER(location)) OR is_in_string(LOWER(ITR.CITY), LOWER(location)) THEN
+	DBMS_OUTPUT.PUT_LINE('ADDRESS: ' ||ITR.DOOR || ', '|| ITR.STREET||', ' ||ITR.LOCALITY ||', ' || ITR.CITY||', '||ITR.PINCODE||', ' ||ITR.STATE_NAME);
+END IF;
+END LOOP;
+END;
+/
+
+
+--Procedure to check for rented status
+CREATE OR REPLACE PROCEDURE rentStatus(PID in NUMBER) AS
+    N INTEGER;
+BEGIN
+	SELECT COUNT(*) INTO N FROM PROPERTY WHERE PROPERTY.PROPERTYID = PID;
+	IF N > 0 THEN 
+		FOR ITR IN (SELECT * FROM PROPERTY WHERE PROPERTY.PROPERTYID = PID)
+		LOOP
+        	IF ITR.isRented = 1 THEN
+        		DBMS_OUTPUT.PUT_LINE('The Property ' || PID || ' has been rented to a customer');
+			ELSE
+                DBMS_OUTPUT.PUT_LINE('The Property ' || PID || ' is available for rent');
+			END IF;
+        END LOOP;
+	ELSE
+        DBMS_OUTPUT.PUT_LINE('The Property ' || PID || ' does not exist');
+	END IF;
+END;
+/
 
     
 
