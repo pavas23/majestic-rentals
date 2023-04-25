@@ -56,7 +56,7 @@ SELECT BEDROOM_COUNT,RES_TYPE INTO N,PROP_TYPE FROM RES_PROP WHERE RES_PROP.PROP
 ELSE
 SELECT COM_TYPE INTO PROP_TYPE FROM COM_PROP WHERE COM_PROP.PROPERTYID = ITR.PROPERTYID;
 END IF;
-IF ITR.isRented = 1 THEN
+IF ITR.isRented = 1 AND CHECKRENTSTAT(ITR.PROPERTYID) THEN
 DBMS_OUTPUT.PUT_LINE('PROPERTY ID: '||ITR.PROPERTYID|| ' (RENTED)');
 ELSE 
 DBMS_OUTPUT.PUT_LINE('PROPERTY ID: '||ITR.PROPERTYID|| ' (AVAILABLE)');
@@ -134,11 +134,38 @@ END is_in_string;
 /
 
 CREATE OR REPLACE PROCEDURE findPlace(location IN VARCHAR2) AS
+N INTEGER;
+PROP_TYPE VARCHAR(200);
 BEGIN
 FOR ITR IN (SELECT * FROM PROPERTY)
 LOOP
 IF is_in_string(LOWER(ITR.LOCALITY), LOWER(location)) OR is_in_string(LOWER(ITR.CITY), LOWER(location)) THEN
-	DBMS_OUTPUT.PUT_LINE('ADDRESS: ' ||ITR.DOOR || ', '|| ITR.STREET||', ' ||ITR.LOCALITY ||', ' || ITR.CITY||', '||ITR.PINCODE||', ' ||ITR.STATE_NAME);
+IF ITR.PROPERTY_TYPE = 'Residential' or ITR.PROPERTY_TYPE = 'RESIDENTIAL' OR ITR.PROPERTY_TYPE = 'residential' THEN
+SELECT BEDROOM_COUNT,RES_TYPE INTO N,PROP_TYPE FROM RES_PROP WHERE RES_PROP.PROPERTYID = ITR.PROPERTYID;
+ELSE
+SELECT COM_TYPE INTO PROP_TYPE FROM COM_PROP WHERE COM_PROP.PROPERTYID = ITR.PROPERTYID;
+END IF;
+IF ITR.isRented = 1 AND CHECKRENTSTAT(ITR.PROPERTYID) THEN
+DBMS_OUTPUT.PUT_LINE('PROPERTY ID: '||ITR.PROPERTYID|| ' (RENTED)');
+ELSE 
+DBMS_OUTPUT.PUT_LINE('PROPERTY ID: '||ITR.PROPERTYID|| ' (AVAILABLE)');
+END IF;
+DBMS_OUTPUT.PUT_LINE('ADDRESS: ' ||ITR.DOOR || ', '|| ITR.STREET||', ' ||ITR.LOCALITY ||', ' || ITR.CITY||', '||ITR.PINCODE||', ' ||ITR.STATE_NAME);
+DBMS_OUTPUT.PUT_LINE('Year of Construction: '|| ITR.YEAR_OF_CONST);
+DBMS_OUTPUT.PUT_LINE('Rent Per Month: '||ITR.CURRENT_RENT_PM);
+DBMS_OUTPUT.PUT_LINE('Annual Hike: '||ITR.ANNUAL_HIKE);
+DBMS_OUTPUT.PUT_LINE('Start Date: '||ITR.AVAIL_START_DATE || ' End Date: ' ||ITR.AVAIL_END_DATE);
+DBMS_OUTPUT.PUT_LINE('Total Area: '||ITR.TOTAL_AREA);
+DBMS_OUTPUT.PUT_LINE('Floor Count: '||ITR.FLOOR_COUNT);
+IF ITR.PROPERTY_TYPE = 'Residential' or ITR.PROPERTY_TYPE = 'RESIDENTIAL' OR ITR.PROPERTY_TYPE = 'residential' THEN
+DBMS_OUTPUT.PUT_LINE('Property Type: Residential');
+DBMS_OUTPUT.PUT_LINE('No. Of bedrooms: '||N);
+DBMS_OUTPUT.PUT_LINE('Residential Type: '||PROP_TYPE);
+ELSE
+DBMS_OUTPUT.PUT_LINE('Property Type: Commercial');
+DBMS_OUTPUT.PUT_LINE('Commercial Type: '||PROP_TYPE);
+end if;
+DBMS_OUTPUT.PUT_LINE(chr(10));
 END IF;
 END LOOP;
 END;
@@ -146,6 +173,22 @@ END;
 
 
 --Procedure to check for rented status
+create or replace function checkRentStat(prop_id in integer) return boolean
+IS
+end_date_var date;
+curr_date date;
+BEGIN
+select max(end_date) into end_date_var from TENANT_PROP_RENT where RENT_PROPERTYID = prop_id;
+select SYSDATE into curr_date from dual;
+if curr_date > end_date_var THEN
+update property set isRented = 0 where propertyid = prop_id;
+return FALSE;
+ELSE
+return TRUE;
+end IF;
+end;
+/
+
 CREATE OR REPLACE PROCEDURE rentStatus(PID in NUMBER) AS
     N INTEGER;
 BEGIN
@@ -154,7 +197,11 @@ BEGIN
 		FOR ITR IN (SELECT * FROM PROPERTY WHERE PROPERTY.PROPERTYID = PID)
 		LOOP
         	IF ITR.isRented = 1 THEN
+                IF checkRentStat(PID) THEN
         		DBMS_OUTPUT.PUT_LINE('The Property ' || PID || ' has been rented to a customer');
+                ELSE
+                DBMS_OUTPUT.PUT_LINE('The Property ' || PID || ' is available for rent');
+                END IF;
 			ELSE
                 DBMS_OUTPUT.PUT_LINE('The Property ' || PID || ' is available for rent');
 			END IF;

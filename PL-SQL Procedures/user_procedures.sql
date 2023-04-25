@@ -53,11 +53,11 @@ end;
 create or replace procedure getTenantDetails(PROP_ID IN INTEGER) AS
 TID VARCHAR(200);
 tenant_dets users%rowtype;
-
+contact_count integer;
 RENTED_FLAG INTEGER;
 BEGIN
 SELECT ISRENTED INTO RENTED_FLAG FROM PROPERTY WHERE PROPERTYID = PROP_ID;
-IF RENTED_FLAG = 1 THEN
+IF RENTED_FLAG = 1 and checkrentstat(prop_id)THEN
 SELECT TENANTID INTO TID FROM TENANT_PROP_RENT WHERE RENT_PROPERTYID = PROP_ID AND END_DATE = (SELECT MAX(END_DATE) FROM TENANT_PROP_RENT);
 select * into tenant_dets from users where aadharid = tid;
 
@@ -67,10 +67,15 @@ DBMS_OUTPUT.PUT_LINE('age of Tenant: '|| tenant_dets.age);
 DBMS_OUTPUT.PUT_LINE('Email of Tenant: '|| tenant_dets.email);
 DBMS_OUTPUT.PUT_LINE('Address of Tenant: '|| tenant_dets.door||', '||tenant_dets.street||', '||tenant_dets.city||', '||tenant_dets.pincode||', '||tenant_dets.state_name);
 DBMS_OUTPUT.PUT_LINE('Contact Details of Tenant: ');
+select count(*) into contact_count from user_contact_detail where AADHARID = tid;
+if contact_count > 0 then
 FOR itr in (select * from user_contact_detail where AADHARID = tid)
 LOOP
 DBMS_OUTPUT.PUT_LINE(itr.contact);
 end loop;
+ELSE
+DBMS_OUTPUT.PUT_LINE('NO CONTACTS PROVIDED');
+end if;
 ELSE
 DBMS_OUTPUT.PUT_LINE('This property is currently not rented');
 END IF;
@@ -84,6 +89,7 @@ BEGIN
 SELECT COUNT(*) INTO N FROM USERS WHERE AADHARID = USERID;
 IF(N>0) THEN
 INSERT INTO user_contact_detail VALUES(USERID,CONTACT);
+DBMS_OUTPUT.PUT_LINE('Contact updated');
 ELSE
 DBMS_OUTPUT.PUT_LINE('You must register as a user first!');
 END IF;
