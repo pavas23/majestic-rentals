@@ -85,7 +85,7 @@ end;
 /
 
 --RENT A PROPERTY
-CREATE OR REPLACE PROCEDURE rentProperty(USER_ID in VARCHAR,PROP_ID in INTEGER,END_DATE IN DATE,START_DATE IN DATE) AS
+CREATE OR REPLACE PROCEDURE rentProperty(USER_ID in VARCHAR,PROP_ID in INTEGER,START_DATE IN DATE,END_DATE IN DATE) AS
 OID VARCHAR(50);
 RENTED_FLAG INTEGER;
 LAST_END_DATE DATE;
@@ -212,8 +212,93 @@ BEGIN
 END;
 /
 
-    
+--tenant rent history
+create or replace procedure getTenantRentHistory(uid in varchar) as
+pid number;
+initial date;
+final date;
+N number;
+prop_type varchar(200);
+cursor rent_cursor is
+select rent_propertyid,start_date,end_date from tenant_prop_rent where tenantid=uid;
+begin
+open rent_cursor;
+loop
+fetch rent_cursor into pid,initial,final;
+exit when rent_cursor%notfound;
+FOR ITR IN (SELECT * FROM PROPERTY WHERE PROPERTY.PROPERTYID = pid)
+LOOP
+IF ITR.PROPERTY_TYPE = 'Residential' or ITR.PROPERTY_TYPE = 'RESIDENTIAL' OR ITR.PROPERTY_TYPE = 'residential' THEN
+SELECT BEDROOM_COUNT,RES_TYPE INTO N,PROP_TYPE FROM RES_PROP WHERE RES_PROP.PROPERTYID = ITR.PROPERTYID;
+ELSE
+SELECT COM_TYPE INTO PROP_TYPE FROM COM_PROP WHERE COM_PROP.PROPERTYID = ITR.PROPERTYID;
+END IF;
+IF ITR.isRented = 1 AND CHECKRENTSTAT(ITR.PROPERTYID) THEN
+DBMS_OUTPUT.PUT_LINE('PROPERTY ID: '||ITR.PROPERTYID|| ' (RENTED)');
+ELSE 
+DBMS_OUTPUT.PUT_LINE('PROPERTY ID: '||ITR.PROPERTYID|| ' (AVAILABLE)');
+END IF;
+DBMS_OUTPUT.PUT_LINE('ADDRESS: ' ||ITR.DOOR || ', '|| ITR.STREET||', ' ||ITR.LOCALITY ||', ' || ITR.CITY||', '||ITR.PINCODE||', ' ||ITR.STATE_NAME);
+DBMS_OUTPUT.PUT_LINE('Year of Construction: '|| ITR.YEAR_OF_CONST);
+DBMS_OUTPUT.PUT_LINE('Rent Per Month: '||ITR.CURRENT_RENT_PM);
+DBMS_OUTPUT.PUT_LINE('Annual Hike: '||ITR.ANNUAL_HIKE);
+DBMS_OUTPUT.PUT_LINE('Property Available From: '||ITR.AVAIL_START_DATE || ' Till: ' ||ITR.AVAIL_END_DATE);
+DBMS_OUTPUT.PUT_LINE('Total Area: '||ITR.TOTAL_AREA);
+DBMS_OUTPUT.PUT_LINE('Floor Count: '||ITR.FLOOR_COUNT);
+IF ITR.PROPERTY_TYPE = 'Residential' or ITR.PROPERTY_TYPE = 'RESIDENTIAL' OR ITR.PROPERTY_TYPE = 'residential' THEN
+DBMS_OUTPUT.PUT_LINE('Property Type: Residential');
+DBMS_OUTPUT.PUT_LINE('No. Of bedrooms: '||N);
+DBMS_OUTPUT.PUT_LINE('Residential Type: '||PROP_TYPE);
+ELSE
+DBMS_OUTPUT.PUT_LINE('Property Type: Commercial');
+DBMS_OUTPUT.PUT_LINE('Commercial Type: '||PROP_TYPE);
+end if;
+DBMS_OUTPUT.PUT_LINE('Start Date: '||initial);
+DBMS_OUTPUT.PUT_LINE('End Date: '||final);
+DBMS_OUTPUT.PUT_LINE(chr(10)); -- CHR(10) is used to insert line breaks, CHR(9) is for tabs, and CHR(13) is for carriage returns.
+END LOOP;
+end loop;
+close rent_cursor;
+end;
+/
 
+--property rent history
+create or replace procedure getPropertyRentHistory(pid in int) as
+uid varchar(50);
+initial date;
+final date;
+tenant_dets users%rowtype;
+contact_count int;
+cursor prop_cursor is
+select tenantid,start_date,end_date from tenant_prop_rent where RENT_PROPERTYID = pid;
+begin
+open prop_cursor;
+loop
+fetch prop_cursor into uid,initial,final;
+exit when prop_cursor%notfound;
+select * into tenant_dets from users where aadharid = uid;
+DBMS_OUTPUT.PUT_LINE('AadharID of Tenant: '|| tenant_dets.aadharid);
+DBMS_OUTPUT.PUT_LINE('Name of Tenant: '|| tenant_dets.name);
+DBMS_OUTPUT.PUT_LINE('age of Tenant: '|| tenant_dets.age);
+DBMS_OUTPUT.PUT_LINE('Email of Tenant: '|| tenant_dets.email);
+DBMS_OUTPUT.PUT_LINE('Address of Tenant: '|| tenant_dets.door||', '||tenant_dets.street||', '||tenant_dets.city||', '||tenant_dets.pincode||', '||tenant_dets.state_name);
+DBMS_OUTPUT.PUT_LINE('Start Date: '||initial);
+DBMS_OUTPUT.PUT_LINE('End Date: '||final);
+DBMS_OUTPUT.PUT_LINE('Contact Details of Tenant: ');
+select count(*) into contact_count from user_contact_detail where AADHARID = uid;
+if contact_count > 0 then
+FOR itr in (select * from user_contact_detail where AADHARID = uid)
+LOOP
+DBMS_OUTPUT.PUT_LINE(itr.contact);
+end loop;
+ELSE
+DBMS_OUTPUT.PUT_LINE('NO CONTACTS PROVIDED');
+end if;
+DBMS_OUTPUT.PUT_LINE(chr(10));
+end loop;
+close prop_cursor;
+end;
+/
 
 
 
