@@ -85,44 +85,41 @@ end;
 /
 
 --RENT A PROPERTY
+create or replace function checkDates(start_1 in date, end_1 in date,start_2 in date, end_2 in date) return BOOLEAN
+IS
+b boolean;
+BEGIN
+b :=  not (start_1 >= start_2 and start_1 <= end_2) and not (end_1 >= start_2 and end_1 <= end_2) and not (start_2 >= start_1 and start_2 <= end_1) and not (end_2 >= start_1 and end_2 <= end_1);
+return b;
+end;
+/
+
 CREATE OR REPLACE PROCEDURE rentProperty(USER_ID in VARCHAR,PROP_ID in INTEGER,START_DATE IN DATE,END_DATE IN DATE) AS
 OID VARCHAR(50);
 RENTED_FLAG INTEGER;
 LAST_END_DATE DATE;
 PROP_START_DATE DATE;
+b boolean;
 BEGIN
 SELECT OWNER_ID INTO OID FROM PROPERTY WHERE PROPERTYID = PROP_ID;
 IF OID = USER_ID THEN
 DBMS_OUTPUT.PUT_LINE('Owner cant rent their own property');
 ELSE
-SELECT isRented INTO RENTED_FLAG FROM PROPERTY WHERE PROPERTYID = PROP_ID;
-IF RENTED_FLAG = 1 THEN
-SELECT MAX(END_DATE) INTO LAST_END_DATE FROM TENANT_PROP_RENT WHERE RENT_PROPERTYID = PROP_ID;
-IF START_DATE <= LAST_END_DATE THEN
-DBMS_OUTPUT.PUT_LINE('This Property is already rented');
-ELSE
-SELECT AVAIL_END_DATE INTO LAST_END_DATE FROM PROPERTY WHERE PROPERTYID = PROP_ID;
-SELECT AVAIL_START_DATE INTO PROP_START_DATE FROM PROPERTY WHERE PROPERTYID = PROP_ID;
-IF START_DATE < LAST_END_DATE AND END_DATE < LAST_END_DATE AND START_DATE >= PROP_START_DATE THEN
-INSERT INTO TENANT_PROP_RENT VALUES(USER_ID,PROP_ID,START_DATE,END_DATE);
-ELSE 
-DBMS_OUTPUT.PUT_LINE('This property is unavailable during this period.');
-END IF;
-END IF;
-ELSE
-SELECT AVAIL_END_DATE INTO LAST_END_DATE FROM PROPERTY WHERE PROPERTYID = PROP_ID;
-SELECT AVAIL_START_DATE INTO PROP_START_DATE FROM PROPERTY WHERE PROPERTYID = PROP_ID;
-IF(START_DATE>=PROP_START_DATE AND END_DATE < LAST_END_DATE) THEN
+FOR date_rec in (select start_date,end_date from tenant_prop_rent where RENT_PROPERTYID = prop_id)
+LOOP
+b := checkDates(start_date,end_date,date_rec.start_date,date_rec.end_date);
+end loop;
+if b THEN
 INSERT INTO TENANT_PROP_RENT VALUES(USER_ID,PROP_ID,START_DATE,END_DATE);
 UPDATE PROPERTY SET ISRENTED = 1 WHERE PROPERTYID = PROP_ID;
 DBMS_OUTPUT.PUT_LINE('Property successfully rented!');
 ELSE
 DBMS_OUTPUT.PUT_LINE('This property is unavailable during this period.');
-END IF;
-END IF;
+end if;
 END IF;
 END;
 /
+
 
 -- Procedures to search for city, locality
 
@@ -297,6 +294,16 @@ end if;
 DBMS_OUTPUT.PUT_LINE(chr(10));
 end loop;
 close prop_cursor;
+end;
+/
+
+CREATE OR REPLACE PROCEDURE showBookedDates(prop_id in integer) AS
+BEGIN
+DBMS_OUTPUT.put_line('Property is booked for the following dates: '||chr(10));
+for date_rec in (select start_date,end_date from tenant_prop_rent where rent_propertyid = prop_id order by start_date,end_date asc)
+LOOP
+DBMS_OUTPUT.PUT_LINE(date_rec.start_date || ' to '||date_rec.end_date);
+end loop;
 end;
 /
 
