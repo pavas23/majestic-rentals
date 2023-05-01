@@ -22,6 +22,7 @@ COMM_INSERT(PROP_ID,COM_TYPE);
 ELSE
 DBMS_OUTPUT.PUT_LINE('PROPERTY TYPE INVALID!');
 END IF;
+insert into PROPERTY_RENT(propertyid,rent_pm,annual_hike) values (prop_id,CURRENT_RENT_PM,annual_hike);
 END;
 /
 
@@ -216,6 +217,7 @@ initial date;
 final date;
 N number;
 prop_type varchar(200);
+comm float;
 cursor rent_cursor is
 select rent_propertyid,start_date,end_date from tenant_prop_rent where tenantid=uid;
 begin
@@ -252,6 +254,8 @@ DBMS_OUTPUT.PUT_LINE('Commercial Type: '||PROP_TYPE);
 end if;
 DBMS_OUTPUT.PUT_LINE('Start Date: '||initial);
 DBMS_OUTPUT.PUT_LINE('End Date: '||final);
+select agency_com into comm from property_rent where propertyid = pid;
+DBMS_OUTPUT.PUT_LINE('Agency Commission: '||comm);
 DBMS_OUTPUT.PUT_LINE(chr(10)); -- CHR(10) is used to insert line breaks, CHR(9) is for tabs, and CHR(13) is for carriage returns.
 END LOOP;
 end loop;
@@ -267,7 +271,7 @@ final date;
 tenant_dets users%rowtype;
 contact_count int;
 cursor prop_cursor is
-select tenantid,start_date,end_date from tenant_prop_rent where RENT_PROPERTYID = pid;
+select tenantid,start_date,end_date from tenant_prop_rent where RENT_PROPERTYID = pid and sysdate > start_date; 
 begin
 open prop_cursor;
 loop
@@ -307,5 +311,19 @@ end loop;
 end;
 /
 
+CREATE OR REPLACE PROCEDURE updateAgencyCom(prop_id integer,uid varchar,commission float) AS
+dba_flag integer;
+prop_flag integer;
+manager_flag integer;
+BEGIN
+select isDBA into dba_flag from users where aadharid = uid;
+select isManager into manager_flag from users where aadharid = uid;
+if dba_flag = 1 or manager_flag = 1 then 
+update property_rent set AGENCY_COM = commission where PROPERTYid = prop_id;
+ELSE
+dbms_output.put_line('Only managers and DBA are allowed to update commission');
+end if;
+end;
+/
 
 

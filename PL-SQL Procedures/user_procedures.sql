@@ -55,10 +55,13 @@ TID VARCHAR(200);
 tenant_dets users%rowtype;
 contact_count integer;
 RENTED_FLAG INTEGER;
+prop_flag integer;
 BEGIN
 SELECT ISRENTED INTO RENTED_FLAG FROM PROPERTY WHERE PROPERTYID = PROP_ID;
 IF RENTED_FLAG = 1 and checkrentstat(prop_id)THEN
-SELECT TENANTID INTO TID FROM TENANT_PROP_RENT WHERE RENT_PROPERTYID = PROP_ID AND END_DATE = (SELECT MAX(END_DATE) FROM TENANT_PROP_RENT);
+SELECT COUNT(*) INTO prop_flag from TENANT_PROP_RENT WHERE RENT_PROPERTYID = PROP_ID and SYSDATE BETWEEN start_date and end_date;
+if prop_flag>0 then
+SELECT TENANTID INTO TID FROM TENANT_PROP_RENT WHERE RENT_PROPERTYID = PROP_ID AND  SYSDATE BETWEEN start_date and end_date;
 select * into tenant_dets from users where aadharid = tid;
 
 DBMS_OUTPUT.PUT_LINE('AadharID of Tenant: '|| tenant_dets.aadharid);
@@ -75,6 +78,9 @@ DBMS_OUTPUT.PUT_LINE(itr.contact);
 end loop;
 ELSE
 DBMS_OUTPUT.PUT_LINE('NO CONTACTS PROVIDED');
+end if;
+else
+DBMS_OUTPUT.PUT_LINE('This property is currently not rented');
 end if;
 ELSE
 DBMS_OUTPUT.PUT_LINE('This property is currently not rented');
