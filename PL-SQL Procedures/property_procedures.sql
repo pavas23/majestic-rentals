@@ -47,7 +47,7 @@ END IF;
 END;
 /
 
--- getUserProperty() {rename to getPropertyRecords(OID in varchar)}
+-- get user property
 CREATE OR REPLACE PROCEDURE getPropertyRecords(OID IN VARCHAR) AS
 N INTEGER;
 PROP_TYPE VARCHAR(200);
@@ -125,7 +125,7 @@ END IF;
 END;
 /
 
--- Procedures to search for city, locality
+-- procedure to search for city, locality
 CREATE OR REPLACE FUNCTION is_in_string (string_in IN VARCHAR2 ,substring_in   IN VARCHAR2) RETURN BOOLEAN
 IS
 BEGIN
@@ -171,7 +171,7 @@ END LOOP;
 END;
 /
 
---Procedure to check for rented status
+-- procedure to check for rented status
 create or replace function checkRentStat(prop_id in integer) return boolean
 IS
 end_date_var date;
@@ -211,7 +211,7 @@ BEGIN
 END;
 /
 
---tenant rent history
+-- tenant rent history
 create or replace procedure getTenantRentHistory(uid in varchar) as
 pid number;
 initial date;
@@ -326,5 +326,3 @@ dbms_output.put_line('Only managers and DBA are allowed to update commission');
 end if;
 end;
 /
-
-
