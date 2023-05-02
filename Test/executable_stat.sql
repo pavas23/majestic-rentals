@@ -1,4 +1,4 @@
--- INSERT PROPERTY;
+-- INSERT PROPERTY
 exec insertPropertyRecord (270603, '4897-9155-4284', 2, '205-A', 'Scheme-113', 'Vadodara', 'Gujurat', '300018', 1995, '13-JAN-23', '13-JAN-24', 10000, 'Vijay Nagar', 5.0, 5000, 'Residential', 'Villa',null,3);
 exec insertPropertyRecord (280603, '4897-9155-4284', 2, '205-B', 'Scheme-113', 'Vadodara', 'Gujurat', '300018', 1995, '13-JAN-23', '14-JUN-23', 12000, 'Vijay Nagar', 5.0, 5500, 'Residential','Villa',null,4);
 exec insertPropertyRecord (270703, '4897-9155-4284', 2, '205-C', 'Scheme-113', 'Vadodara', 'Gujurat', '300018', 1995, '13-JAN-23', '15-JAN-27', 8000, 'Vijay Nagar', 5.0, 4500, 'Residential', 'Villa',null,3);
@@ -15,8 +15,7 @@ exec insertPropertyRecord (298987, '5114-8817-7684', 1, '212', 'BK Road', 'Itana
 exec insertPropertyRecord (274843, '9711-1712-1294', 7, 'Building 1', 'Reech Road', 'Delhi', 'Delhi', '110021', 2015, '23-MAR-22', '23-MAR-42', 10000000, 'Lajpat Nagar', 1.0, 150000,'Commercial',null, 'Office Building',0);
 exec insertPropertyRecord (286603, '9711-1712-1294', 7, 'Building 2', 'Reech Road', 'Delhi', 'Delhi', '110021', 2015, '23-MAR-22', '23-MAR-42', 10000000, 'Lajpat Nagar', 1.0, 150000, 'Commercial',null, 'Office Building',0);
 
--- RENT PROPERTY TEST;
+-- RENT PROPERTY TEST
 EXEC RENTPROPERTY('5678-9101-1234',270603,'13-DEC-23','12-JUL-23'); --SUCCESS
 EXEC RENTPROPERTY('8425-5438-2750',270603,'13-NOV-23','12-JUN-23'); -- PROPERTY ALREADY RENTED
-EXEC RENTPROPERTY('4897-9155-4284',270603,'13-NOV-23','12-JUN-24'); --OWNER CANT RENT THEIR PROPERTY
-
+EXEC RENTPROPERTY('4897-9155-4284',270603,'13-NOV-23','12-JUN-24'); -- OWNER CANT RENT THEIR PROPERTY
