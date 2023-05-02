@@ -11,3 +11,18 @@ in India.
 
 ![DBMS Project Schema](https://user-images.githubusercontent.com/97559428/226411003-a8dfd79c-cbe8-4ad3-9630-59df7cd6cc86.png)
 
+### Procedures Created
+- InsertPropertyRecord
+- GetPropertyRecords
+- GetTenantDetails
+- CreateNewUser
+- SearchProperyForRent
+- GetRentHistory
+- DeletePropertyByUser
+- RentProperty
+
+
+### Tech Stack
+- PL/SQL
+
+
