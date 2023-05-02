@@ -1,5 +1,5 @@
 --Insert new user
-create or replace procedure insertUser(aadharid in varchar2, name in varchar,age in integer,email in varchar,user_password in varchar,door in varchar,street in varchar,city in varchar,state_name in varchar,pincode in varchar) as begin 
+create or replace procedure createNewUser(aadharid in varchar2, name in varchar,age in integer,email in varchar,user_password in varchar,door in varchar,street in varchar,city in varchar,state_name in varchar,pincode in varchar) as begin 
 insert into users values(aadharid,name,age,email,user_password,door,street,city,state_name,pincode,0,0,0,0);
 end;
 /
