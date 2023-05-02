@@ -1,9 +1,8 @@
---Insert new user
+-- insert new user
 create or replace procedure createNewUser(aadharid in varchar2, name in varchar,age in integer,email in varchar,user_password in varchar,door in varchar,street in varchar,city in varchar,state_name in varchar,pincode in varchar) as begin 
 insert into users values(aadharid,name,age,email,user_password,door,street,city,state_name,pincode,0,0,0,0);
 end;
 /
-
 
 --insert manager
 create or replace procedure insertManager(aadharid_dba in varchar,aadharid_manager in varchar2, name in varchar,age in integer,email in varchar,user_password in varchar,door in varchar,street in varchar,city in varchar,state_name in varchar,pincode in varchar) as
@@ -18,7 +17,7 @@ end if;
 end;
 /
 
---delete manager
+-- delete manager
 create or replace procedure deleteManager(aadharid_dba in varchar,aadharid_manager in varchar2) as
 n integer;
 m integer;
@@ -36,6 +35,7 @@ end if;
 end if;
 end;
 /
+
 -- delete user
 create or replace procedure deleteManager(aadharid_dba in varchar,aadharid_user in varchar2) as
 n integer;
@@ -49,7 +49,7 @@ end if;
 end;
 /
 
---getTenantDetails
+--get tenant details
 create or replace procedure getTenantDetails(PROP_ID IN INTEGER) AS
 TID VARCHAR(200);
 tenant_dets users%rowtype;
@@ -63,7 +63,6 @@ SELECT COUNT(*) INTO prop_flag from TENANT_PROP_RENT WHERE RENT_PROPERTYID = PRO
 if prop_flag>0 then
 SELECT TENANTID INTO TID FROM TENANT_PROP_RENT WHERE RENT_PROPERTYID = PROP_ID AND  SYSDATE BETWEEN start_date and end_date;
 select * into tenant_dets from users where aadharid = tid;
-
 DBMS_OUTPUT.PUT_LINE('AadharID of Tenant: '|| tenant_dets.aadharid);
 DBMS_OUTPUT.PUT_LINE('Name of Tenant: '|| tenant_dets.name);
 DBMS_OUTPUT.PUT_LINE('age of Tenant: '|| tenant_dets.age);
@@ -88,7 +87,7 @@ END IF;
 end;
 /
 
---enter contact details
+-- enter contact details
 create or replace procedure enterContactDetails(USERID IN VARCHAR,CONTACT IN VARCHAR) AS
 N INTEGER;
 BEGIN
@@ -101,8 +100,3 @@ DBMS_OUTPUT.PUT_LINE('You must register as a user first!');
 END IF;
 END;
 /
-
-
-
-
-
