@@ -1,6 +1,6 @@
 ## DBMS Project
 
-This is an online Property Rental Agency which facilitates mediating between Owners of a properties and the Tenants, across multiple cities
+This is a Property Rental Agency which facilitates mediating between Owners of a properties and the Tenants, across multiple cities
 in India.
 
 ### Enhanced ER Model
