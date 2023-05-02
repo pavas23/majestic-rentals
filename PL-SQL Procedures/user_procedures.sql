@@ -4,7 +4,7 @@ insert into users values(aadharid,name,age,email,user_password,door,street,city,
 end;
 /
 
---insert manager
+-- insert manager
 create or replace procedure insertManager(aadharid_dba in varchar,aadharid_manager in varchar2, name in varchar,age in integer,email in varchar,user_password in varchar,door in varchar,street in varchar,city in varchar,state_name in varchar,pincode in varchar) as
 n integer;
 begin
@@ -100,8 +100,3 @@ DBMS_OUTPUT.PUT_LINE('You must register as a user first!');
 END IF;
 END;
 /
-
-
-
-
-
