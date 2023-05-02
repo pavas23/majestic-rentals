@@ -1,22 +1,10 @@
-<<<<<<< HEAD:test.sql
-create or replace procedure insertPropertyRecord(PROP_ID IN INTEGER,OWNER_ID IN VARCHAR,FLOOR_COUNT IN INTEGER, DOOR IN VARCHAR,STREET IN VARCHAR,CITY IN VARCHAR,STATE_NAME IN VARCHAR,PINCODE IN VARCHAR,YEAR_OF_CONST IN INTEGER,AVAIL_START_DATE IN DATE,AVAIL_END_DATE IN DATE,CURRENT_RENT_PM IN INTEGER,LOCALITY IN VARCHAR,ANNUAL_HIKE IN FLOAT,TOTAL_AREA IN INTEGER,PROP_TYPE IN VARCHAR,RES_TYPE IN VARCHAR DEFAULT NULL,COM_TYPE IN VARCHAR DEFAULT NULL,BEDROOM_COUNT IN INTEGER DEFAULT 0) AS
-BEGIN
-INSERT INTO PROPERTY VALUES(PROP_ID,OWNER_ID,FLOOR_COUNT,DOOR,STREET,CITY,STATE_NAME,PINCODE,YEAR_OF_CONST,AVAIL_START_DATE,AVAIL_END_DATE,CURRENT_RENT_PM,LOCALITY,0,TOTAL_AREA,PROP_TYPE,ANNUAL_HIKE);
-UPDATE USERS SET ISOWNER = 1 WHERE AADHARID = OWNER_ID;
-IF PROP_TYPE = 'Residential' or PROP_TYPE = 'RESIDENTIAL' OR PROP_TYPE = 'residential' THEN
-RES_INSERT(PROP_ID,RES_TYPE,BEDROOM_COUNT);
-ELSIF PROP_TYPE = 'COMMERCIAL' or PROP_TYPE = 'commercial' OR PROP_TYPE = 'Commercial' THEN
-COMM_INSERT(PROP_ID,COM_TYPE);
-ELSE
-DBMS_OUTPUT.PUT_LINE('PROPERTY TYPE INVALID!');
-=======
--- insert new user
+--Insert new user
 create or replace procedure insertUser(aadharid in varchar2, name in varchar,age in integer,email in varchar,user_password in varchar,door in varchar,street in varchar,city in varchar,state_name in varchar,pincode in varchar) as begin 
 insert into users values(aadharid,name,age,email,user_password,door,street,city,state_name,pincode,0,0,0,0);
 end;
 /
 
--- insert manager
+--insert manager
 create or replace procedure insertManager(aadharid_dba in varchar,aadharid_manager in varchar2, name in varchar,age in integer,email in varchar,user_password in varchar,door in varchar,street in varchar,city in varchar,state_name in varchar,pincode in varchar) as
 n integer;
 begin
@@ -29,7 +17,7 @@ end if;
 end;
 /
 
--- delete manager
+--delete manager
 create or replace procedure deleteManager(aadharid_dba in varchar,aadharid_manager in varchar2) as
 n integer;
 m integer;
@@ -75,6 +63,7 @@ SELECT COUNT(*) INTO prop_flag from TENANT_PROP_RENT WHERE RENT_PROPERTYID = PRO
 if prop_flag>0 then
 SELECT TENANTID INTO TID FROM TENANT_PROP_RENT WHERE RENT_PROPERTYID = PROP_ID AND  SYSDATE BETWEEN start_date and end_date;
 select * into tenant_dets from users where aadharid = tid;
+
 DBMS_OUTPUT.PUT_LINE('AadharID of Tenant: '|| tenant_dets.aadharid);
 DBMS_OUTPUT.PUT_LINE('Name of Tenant: '|| tenant_dets.name);
 DBMS_OUTPUT.PUT_LINE('age of Tenant: '|| tenant_dets.age);
@@ -99,7 +88,7 @@ END IF;
 end;
 /
 
--- enter contact details
+--enter contact details
 create or replace procedure enterContactDetails(USERID IN VARCHAR,CONTACT IN VARCHAR) AS
 N INTEGER;
 BEGIN
@@ -109,12 +98,11 @@ INSERT INTO user_contact_detail VALUES(USERID,CONTACT);
 DBMS_OUTPUT.PUT_LINE('Contact updated');
 ELSE
 DBMS_OUTPUT.PUT_LINE('You must register as a user first!');
->>>>>>> 9f2f6bc372c4da9c07fc7d2f94300d964651ef00:Test/test.sql
 END IF;
-insert into PROPERTY_RENT(propertyid,rent_pm,annual_hike) values (prop_id,CURRENT_RENT_PM,annual_hike);
 END;
-<<<<<<< HEAD:test.sql
 /
-=======
-/
->>>>>>> 9f2f6bc372c4da9c07fc7d2f94300d964651ef00:Test/test.sql
+
+
+
+
+

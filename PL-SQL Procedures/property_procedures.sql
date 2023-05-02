@@ -1,33 +1,36 @@
---insert into residential TABLE
+-- insert into residential table
 CREATE OR REPLACE PROCEDURE RES_INSERT(PROP_ID IN INTEGER,RES_TYPE IN VARCHAR,BEDROOM_COUNT IN INTEGER) AS
 BEGIN
 INSERT INTO RES_PROP VALUES(PROP_ID,BEDROOM_COUNT,RES_TYPE);  
 END;
 /
--- insert into commercial
+
+-- insert into commercial table
 CREATE OR REPLACE PROCEDURE COMM_INSERT(PROP_ID IN INTEGER,COM_TYPE IN VARCHAR) AS
 BEGIN
 INSERT INTO COM_PROP VALUES(PROP_ID,COM_TYPE);  
 END;
 /
--- INSERT NEW PROPERTY AND DESIGNATE USER AS OWNER
+
+-- insert new property and designate user as owner
 create or replace procedure insertPropertyRecord(PROP_ID IN INTEGER,OWNER_ID IN VARCHAR,FLOOR_COUNT IN INTEGER, DOOR IN VARCHAR,STREET IN VARCHAR,CITY IN VARCHAR,STATE_NAME IN VARCHAR,PINCODE IN VARCHAR,YEAR_OF_CONST IN INTEGER,AVAIL_START_DATE IN DATE,AVAIL_END_DATE IN DATE,CURRENT_RENT_PM IN INTEGER,LOCALITY IN VARCHAR,ANNUAL_HIKE IN FLOAT,TOTAL_AREA IN INTEGER,PROP_TYPE IN VARCHAR,RES_TYPE IN VARCHAR DEFAULT NULL,COM_TYPE IN VARCHAR DEFAULT NULL,BEDROOM_COUNT IN INTEGER DEFAULT 0) AS
 BEGIN
 INSERT INTO PROPERTY VALUES(PROP_ID,OWNER_ID,FLOOR_COUNT,DOOR,STREET,CITY,STATE_NAME,PINCODE,YEAR_OF_CONST,AVAIL_START_DATE,AVAIL_END_DATE,CURRENT_RENT_PM,LOCALITY,0,TOTAL_AREA,PROP_TYPE,ANNUAL_HIKE);
 UPDATE USERS SET ISOWNER = 1 WHERE AADHARID = OWNER_ID;
 IF PROP_TYPE = 'Residential' or PROP_TYPE = 'RESIDENTIAL' OR PROP_TYPE = 'residential' THEN
 RES_INSERT(PROP_ID,RES_TYPE,BEDROOM_COUNT);
+DBMS_OUTPUT.PUT_LINE('Property Inserted !');
 ELSIF PROP_TYPE = 'COMMERCIAL' or PROP_TYPE = 'commercial' OR PROP_TYPE = 'Commercial' THEN
 COMM_INSERT(PROP_ID,COM_TYPE);
+DBMS_OUTPUT.PUT_LINE('Property Inserted !');
 ELSE
 DBMS_OUTPUT.PUT_LINE('PROPERTY TYPE INVALID!');
 END IF;
 insert into PROPERTY_RENT(propertyid,rent_pm,annual_hike) values (prop_id,CURRENT_RENT_PM,annual_hike);
-DBMS_OUTPUT.PUT_LINE('Property Record Successfully inserted');
 END;
 /
 
---DELETE PROPERTY BY USER
+-- delete property by user
 CREATE OR REPLACE PROCEDURE deletePropertyByUser(PROP_ID IN INTEGER,OW_ID IN VARCHAR) AS
 PROPERTY_COUNT INTEGER;
 BEGIN
@@ -44,7 +47,7 @@ END IF;
 END;
 /
 
---getUserProperty() {rename to getPropertyRecords(OID in varchar)}
+-- getUserProperty() {rename to getPropertyRecords(OID in varchar)}
 CREATE OR REPLACE PROCEDURE getPropertyRecords(OID IN VARCHAR) AS
 N INTEGER;
 PROP_TYPE VARCHAR(200);
@@ -86,7 +89,7 @@ END IF;
 end;
 /
 
---RENT A PROPERTY
+-- rent a property
 create or replace function checkDates(start_1 in date, end_1 in date,start_2 in date, end_2 in date) return BOOLEAN
 IS
 b boolean;
@@ -114,7 +117,6 @@ end loop;
 if b THEN
 INSERT INTO TENANT_PROP_RENT VALUES(USER_ID,PROP_ID,START_DATE,END_DATE);
 UPDATE PROPERTY SET ISRENTED = 1 WHERE PROPERTYID = PROP_ID;
-UPDATE USERS SET ISTENANT = 1 WHERE AADHARID = USER_ID;
 DBMS_OUTPUT.PUT_LINE('Property successfully rented!');
 ELSE
 DBMS_OUTPUT.PUT_LINE('This property is unavailable during this period.');
@@ -123,9 +125,7 @@ END IF;
 END;
 /
 
-
 -- Procedures to search for city, locality
-
 CREATE OR REPLACE FUNCTION is_in_string (string_in IN VARCHAR2 ,substring_in   IN VARCHAR2) RETURN BOOLEAN
 IS
 BEGIN
@@ -170,7 +170,6 @@ END IF;
 END LOOP;
 END;
 /
-
 
 --Procedure to check for rented status
 create or replace function checkRentStat(prop_id in integer) return boolean
@@ -265,7 +264,7 @@ close rent_cursor;
 end;
 /
 
---property rent history
+-- property rent history
 create or replace procedure getPropertyRentHistory(pid in int) as
 uid varchar(50);
 initial date;
@@ -327,3 +326,5 @@ dbms_output.put_line('Only managers and DBA are allowed to update commission');
 end if;
 end;
 /
+
+

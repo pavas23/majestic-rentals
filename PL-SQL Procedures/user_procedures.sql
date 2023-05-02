@@ -49,7 +49,7 @@ end if;
 end;
 /
 
---get tenant details
+-- get tenant details
 create or replace procedure getTenantDetails(PROP_ID IN INTEGER) AS
 TID VARCHAR(200);
 tenant_dets users%rowtype;
@@ -58,7 +58,7 @@ RENTED_FLAG INTEGER;
 prop_flag integer;
 BEGIN
 SELECT ISRENTED INTO RENTED_FLAG FROM PROPERTY WHERE PROPERTYID = PROP_ID;
-IF RENTED_FLAG = 1 and checkrentstat(prop_id)THEN
+IF RENTED_FLAG = 1 and checkrentstat(prop_id) THEN
 SELECT COUNT(*) INTO prop_flag from TENANT_PROP_RENT WHERE RENT_PROPERTYID = PROP_ID and SYSDATE BETWEEN start_date and end_date;
 if prop_flag>0 then
 SELECT TENANTID INTO TID FROM TENANT_PROP_RENT WHERE RENT_PROPERTYID = PROP_ID AND  SYSDATE BETWEEN start_date and end_date;
@@ -100,3 +100,8 @@ DBMS_OUTPUT.PUT_LINE('You must register as a user first!');
 END IF;
 END;
 /
+
+
+
+
+
