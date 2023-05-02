@@ -325,5 +325,3 @@ dbms_output.put_line('Only managers and DBA are allowed to update commission');
 end if;
 end;
 /
-
-
