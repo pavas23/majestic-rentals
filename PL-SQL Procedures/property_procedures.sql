@@ -23,6 +23,7 @@ ELSE
 DBMS_OUTPUT.PUT_LINE('PROPERTY TYPE INVALID!');
 END IF;
 insert into PROPERTY_RENT(propertyid,rent_pm,annual_hike) values (prop_id,CURRENT_RENT_PM,annual_hike);
+DBMS_OUTPUT.PUT_LINE('Property Record Successfully inserted');
 END;
 /
 
@@ -100,7 +101,7 @@ OID VARCHAR(50);
 RENTED_FLAG INTEGER;
 LAST_END_DATE DATE;
 PROP_START_DATE DATE;
-b boolean;
+b boolean := true;
 BEGIN
 SELECT OWNER_ID INTO OID FROM PROPERTY WHERE PROPERTYID = PROP_ID;
 IF OID = USER_ID THEN
